@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VoxDesk Enterprise — AI Voice Support</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-[#090d16] dark:text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white min-h-dvh flex flex-col transition-colors duration-200">
+
+  <!-- Spacious & Responsive Enterprise Console Container -->
+  <main class="console w-full max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-6 lg:py-8 flex-1 flex flex-col">
+    <div class="rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-[#101729] shadow-xl shadow-slate-900/5 dark:shadow-black/40 overflow-hidden flex-1 flex flex-col min-h-[calc(100dvh-1.5rem)] sm:min-h-[calc(100dvh-3rem)] lg:min-h-[calc(100dvh-4rem)] max-h-[1080px]">
+
+      <!-- Top Bar: Brand, Tenant, Call State, Settings Trigger -->
+      <header class="topbar px-4 sm:px-7 lg:px-8 py-4 sm:py-5 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-3 sm:gap-4 bg-slate-50/50 dark:bg-slate-900/40 shrink-0">
+        <div class="brand flex items-center gap-3 sm:gap-4 min-w-0">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shadow-sm shadow-blue-500/20 ring-1 ring-white/15 shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 sm:gap-2.5">
+              <span class="dot shrink-0" id="conn-dot" title="Connection status"></span>
+              <h1 id="tenant-name" class="text-base sm:text-lg font-semibold tracking-tight text-slate-900 dark:text-white truncate">VoxDesk</h1>
+              <span class="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 hidden xs:inline-block sm:inline-block">Enterprise</span>
+            </div>
+            <p id="state-detail-text" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 truncate mt-0.5">Press Start Call to talk to support</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          <div class="status" id="status-pill" data-state="idle">Idle</div>
+
+          <button id="settings-btn" type="button" class="inline-flex items-center gap-2 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-xs sm:text-sm font-medium" title="Settings &amp; Telemetry" aria-label="Open settings and telemetry modal" aria-haspopup="dialog">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span class="hidden md:inline">Settings</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Audio Visualizer & Timer Strip -->
+      <section class="audio-panel px-4 sm:px-7 lg:px-8 py-4 sm:py-6 bg-slate-950 dark:bg-[#080c17] border-b border-slate-200 dark:border-slate-800/80 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6 shrink-0">
+        <div class="flex-1 min-w-0">
+          <canvas id="waveform" width="960" height="108" aria-hidden="true" class="w-full h-20 sm:h-28 block rounded-xl"></canvas>
+        </div>
+        <div class="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 sm:border-l border-slate-800 pt-3 sm:pt-0 sm:pl-6 shrink-0">
+          <span class="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-slate-400 block">Call Duration</span>
+          <div class="timer font-mono text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-white tabular-nums mt-0.5" id="call-timer">00:00</div>
+        </div>
+      </section>
+
+      <!-- Live Conversation Transcript (Expands responsively to fill available height) -->
+      <section class="transcript flex-1 min-h-[260px] overflow-y-auto px-4 sm:px-7 lg:px-8 py-5 sm:py-6 flex flex-col gap-4" id="transcript" aria-live="polite">
+        <div class="hint m-auto max-w-md text-center py-8 px-4" id="empty-hint">
+          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-7 h-7 sm:w-8 sm:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+            </svg>
+          </div>
+          <p class="text-base sm:text-lg font-semibold text-slate-800 dark:text-slate-100 mb-1.5">Press <strong>Start Call</strong> to talk to the support agent.</p>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Speak naturally at any time to interrupt. Headphones are recommended for best audio clarity.</p>
+        </div>
+      </section>
+
+      <!-- Call Controls Footer -->
+      <footer class="controls px-4 sm:px-7 lg:px-8 py-4 sm:py-5 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/60 dark:bg-slate-900/40 flex flex-wrap items-center justify-center gap-3 sm:gap-4 shrink-0">
+        <button id="mute-btn" type="button" class="round secondary flex-1 sm:flex-initial justify-center inline-flex items-center gap-2.5 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all shadow-sm" title="Mute microphone (Space)" disabled>
+          <svg id="mic-icon-on" class="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+          </svg>
+          <svg id="mic-icon-off" class="w-4 h-4 sm:w-5 sm:h-5 text-rose-500 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" clip-rule="evenodd" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+          </svg>
+          <span id="mute-label">Mute</span>
+        </button>
+
+        <button id="call-btn" type="button" class="round primary flex-[1.5] sm:flex-initial justify-center inline-flex items-center gap-2.5 px-7 sm:px-9 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 active:bg-blue-700 disabled:opacity-40 disabled:pointer-events-none shadow-md shadow-blue-600/25 transition-all" title="Start call">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          </svg>
+          <span>Start Call</span>
+        </button>
+
+        <button id="end-btn" type="button" class="round danger flex-1 sm:flex-initial justify-center inline-flex items-center gap-2.5 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-rose-600 hover:bg-rose-500 active:bg-rose-700 disabled:opacity-40 disabled:pointer-events-none shadow-sm shadow-rose-600/20 transition-all" title="End call" disabled>
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <span>End</span>
+        </button>
+      </footer>
+    </div>
+  </main>
+
+  <!-- Large, Responsive Tabbed Settings & Telemetry Modal -->
+  <div id="settings-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-2 sm:p-6 lg:p-10" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+    <!-- Backdrop -->
+    <div id="settings-backdrop" class="fixed inset-0 bg-slate-950/65 backdrop-blur-sm transition-opacity"></div>
+
+    <!-- Modal Panel (Expanded to max-w-4xl & responsive height) -->
+    <div class="relative z-10 w-full max-w-4xl rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101729] shadow-2xl overflow-hidden flex flex-col min-h-[65dvh] max-h-[92dvh] sm:max-h-[88dvh]">
+      <!-- Modal Header -->
+      <div class="px-5 sm:px-8 py-4 sm:py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4 shrink-0">
+        <div>
+          <h2 id="settings-modal-title" class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">Console Settings &amp; Telemetry</h2>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">System preferences, live pipeline diagnostics, and session history</p>
+        </div>
+        <button id="settings-close-btn" type="button" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="Close modal">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Tabs Navigation -->
+      <div class="px-5 sm:px-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 flex items-center gap-2 sm:gap-4 overflow-x-auto shrink-0" role="tablist">
+        <button type="button" data-tab="tab-general" class="modal-tab active-tab px-3 sm:px-4 py-3 sm:py-3.5 text-xs sm:text-sm font-semibold border-b-2 transition-colors whitespace-nowrap" role="tab" aria-selected="true">
+          General &amp; Controls
+        </button>
+        <button type="button" data-tab="tab-latency" class="modal-tab px-3 sm:px-4 py-3 sm:py-3.5 text-xs sm:text-sm font-semibold border-b-2 transition-colors whitespace-nowrap" role="tab" aria-selected="false">
+          Live Latency
+        </button>
+        <button type="button" data-tab="tab-history" class="modal-tab px-3 sm:px-4 py-3 sm:py-3.5 text-xs sm:text-sm font-semibold border-b-2 transition-colors whitespace-nowrap" role="tab" aria-selected="false">
+          Call History &amp; KPIs
+        </button>
+        <button type="button" data-tab="tab-system" class="modal-tab px-3 sm:px-4 py-3 sm:py-3.5 text-xs sm:text-sm font-semibold border-b-2 transition-colors whitespace-nowrap" role="tab" aria-selected="false">
+          System Info
+        </button>
+      </div>
+
+      <!-- Modal Tab Panels -->
+      <div class="p-5 sm:p-8 overflow-y-auto space-y-6 flex-1">
+
+        <!-- TAB 1: General & Controls -->
+        <div id="tab-general" class="tab-panel space-y-4 sm:space-y-5" role="tabpanel">
+          <!-- Appearance -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40">
+            <div>
+              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-100">Interface Theme</h3>
+              <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">Switch between Enterprise Dark and Light appearance</p>
+            </div>
+            <button id="theme-toggle" type="button" class="self-start sm:self-auto inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+              <svg id="theme-icon-light" class="w-4 h-4 sm:w-5 sm:h-5 hidden dark:block text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              <svg id="theme-icon-dark" class="w-4 h-4 sm:w-5 sm:h-5 block dark:hidden text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+              <span id="theme-label">Toggle Theme</span>
+            </button>
+          </div>
+
+          <!-- Transcript Actions -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40">
+            <div>
+              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-100">Transcript Management</h3>
+              <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">Export current session log or clear the transcript window (<span id="turn-counter-badge" class="font-mono">0 turns</span>)</p>
+            </div>
+            <div class="flex items-center gap-2.5 self-start sm:self-auto">
+              <button id="export-transcript-btn" type="button" class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                Export .txt
+              </button>
+              <button id="clear-transcript-btn" type="button" class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <!-- Manual Barge-In & Shortcuts -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40">
+            <div>
+              <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-100">Manual Barge-In &amp; Shortcuts</h3>
+              <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">Press <kbd class="px-1.5 py-0.5 font-mono text-xs rounded bg-slate-200 dark:bg-slate-800">Space</kbd> during a call to toggle mute, or flush agent speech manually</p>
+            </div>
+            <button id="interrupt-btn" type="button" class="self-start sm:self-auto px-4 py-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300 text-xs sm:text-sm font-semibold hover:bg-amber-500/20 disabled:opacity-40 disabled:pointer-events-none transition-colors" disabled>
+              Interrupt Agent
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 2: Live Latency -->
+        <div id="tab-latency" class="tab-panel hidden space-y-5" role="tabpanel">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Current Turn Stage Breakdown</span>
+            <span class="text-xs font-mono text-slate-400">Target SLA &lt; 2.8s median</span>
+          </div>
+
+          <div id="latency-bars" class="space-y-4 p-5 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="text-xs sm:text-sm text-slate-400 dark:text-slate-500 text-center py-6">
+              Stage metrics will populate on the first voice turn.
+            </div>
+          </div>
+
+          <section class="metrics flex flex-wrap gap-2" id="metrics" hidden></section>
+        </div>
+
+        <!-- TAB 3: Call History & KPIs -->
+        <div id="tab-history" class="tab-panel hidden space-y-5" role="tabpanel">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Aggregate Operations Telemetry</span>
+            <button id="refresh-stats-btn" type="button" class="text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
+              Refresh
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
+            <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block">Total Calls</span>
+              <span id="stat-total-calls" class="font-mono text-2xl sm:text-3xl font-semibold text-slate-800 dark:text-slate-100 mt-1 block">0</span>
+            </div>
+            <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block">Total Turns</span>
+              <span id="stat-total-turns" class="font-mono text-2xl sm:text-3xl font-semibold text-slate-800 dark:text-slate-100 mt-1 block">0</span>
+            </div>
+            <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block">Talk Time</span>
+              <span id="stat-talk-time" class="font-mono text-2xl sm:text-3xl font-semibold text-slate-800 dark:text-slate-100 mt-1 block">0s</span>
+            </div>
+          </div>
+
+          <div class="p-4 sm:p-5 rounded-2xl bg-slate-50/70 dark:bg-slate-900/40 border border-slate-200/70 dark:border-slate-800">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-2.5">Historical Average Stage Latency</span>
+            <div id="stat-avg-latencies" class="flex flex-wrap gap-2 text-xs font-mono text-slate-500 dark:text-slate-400">
+              <span>No historical metrics recorded</span>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden">
+            <div class="px-5 py-3 bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200/70 dark:border-slate-800 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Recent Call Sessions
+            </div>
+            <div id="recent-calls-list" class="divide-y divide-slate-100 dark:divide-slate-800/70 max-h-64 overflow-y-auto text-xs sm:text-sm">
+              <div class="p-5 text-center text-slate-400 dark:text-slate-500">Loading call records…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: System Info -->
+        <div id="tab-system" class="tab-panel hidden space-y-4" role="tabpanel">
+          <div class="p-5 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 space-y-3.5 text-xs sm:text-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 py-2 border-b border-slate-200/60 dark:border-slate-800">
+              <span class="text-slate-500 dark:text-slate-400">System Status</span>
+              <span id="health-status-text" class="font-semibold text-emerald-600 dark:text-emerald-400">System Ready</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 py-2 border-b border-slate-200/60 dark:border-slate-800">
+              <span class="text-slate-500 dark:text-slate-400">Active Session ID</span>
+              <span id="call-id-badge" class="font-mono text-slate-700 dark:text-slate-200">No active session</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 py-2 border-b border-slate-200/60 dark:border-slate-800">
+              <span class="text-slate-500 dark:text-slate-400">LLM Model</span>
+              <span id="health-model" class="font-mono text-slate-700 dark:text-slate-200 break-all">loading…</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 py-2 border-b border-slate-200/60 dark:border-slate-800">
+              <span class="text-slate-500 dark:text-slate-400">RAG Knowledge Index</span>
+              <span id="health-rag" class="font-mono text-slate-700 dark:text-slate-200">— chunks</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 py-2">
+              <span class="text-slate-500 dark:text-slate-400">Audio Pipeline</span>
+              <p class="footnote font-mono text-slate-700 dark:text-slate-200 m-0" id="footnote">voice en_US-lessac-medium · tts 22050 Hz · asr 16 kHz</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

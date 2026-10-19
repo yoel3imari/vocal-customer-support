@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+voices/
+models/
+data/calls.db
+data/*/index/
+.pytest_cache/
+*.log
